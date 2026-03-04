@@ -1,6 +1,6 @@
 ﻿using NetArchTest.Rules;
 
-namespace ArchitectureTests;
+namespace App.Tests.Architecture;
 
 public static class ArchTestExtensions
 {
@@ -19,3 +19,4 @@ public static class ArchTestExtensions
                                             """);
     }
 }
+

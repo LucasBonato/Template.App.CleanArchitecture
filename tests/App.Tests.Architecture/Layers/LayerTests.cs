@@ -3,7 +3,7 @@ using NetArchTest.Rules;
 using Xunit;
 using TestResult = NetArchTest.Rules.TestResult;
 
-namespace ArchitectureTests.Layers;
+namespace App.Tests.Architecture.Layers;
 
 public class LayerTests : BaseTest
 {
@@ -117,3 +117,4 @@ public class LayerTests : BaseTest
         result.ShouldBeSuccessful("Presentation layer should not depend on Infrastructure layer");
     }
 }
+

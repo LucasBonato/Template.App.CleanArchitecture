@@ -3,6 +3,7 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <PackageId>App.Tests.Architecture</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

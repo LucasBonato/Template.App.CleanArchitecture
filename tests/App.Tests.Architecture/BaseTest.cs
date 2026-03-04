@@ -1,4 +1,4 @@
-﻿namespace ArchitectureTests;
+﻿namespace App.Tests.Architecture;
 
 public abstract class BaseTest
 {
@@ -7,3 +7,4 @@ public abstract class BaseTest
     protected const string InfrastructureNamespace = "App.Infrastructure";
     protected const string PresentationNamespace = "App.Presentation";
 }
+
