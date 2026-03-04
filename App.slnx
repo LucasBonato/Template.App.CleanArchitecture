@@ -8,7 +8,7 @@
     <Project Path="src/App/App.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/ArchitectureTests/ArchitectureTests.csproj" />
+    <Project Path="tests/App.Tests.Architecture/App.Tests.Architecture.csproj" />
   </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />
