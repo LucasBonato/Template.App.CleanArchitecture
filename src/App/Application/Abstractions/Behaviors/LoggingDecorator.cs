@@ -11,17 +11,21 @@ internal static class LoggingDecorator
     ) : ICommandHandler<TCommand, TResponse> where TCommand : ICommand<TResponse> {
         public async Task<Result<TResponse>> Handle(TCommand command, CancellationToken cancellationToken)
         {
-            string commandName = typeof(TCommand).Name;
-
-            logger.LogInformation("Processing command {Command}", commandName);
+            if (logger.IsEnabled(LogLevel.Information))
+                logger.LogInformation("Processing command {Command}", typeof(TCommand).Name);
 
             Result<TResponse> result = await innerHandler.Handle(command, cancellationToken);
 
             if (result.IsSuccess)
-                logger.LogInformation("Completed command {Command}", commandName);
-            else
-                using (logger.BeginScope(new Dictionary<string, object> { ["Error"] = result.Error }))
-                    logger.LogError("Completed command {Command} with error", commandName);
+            {
+                if (logger.IsEnabled(LogLevel.Information))
+                    logger.LogInformation("Completed command {Command}", typeof(TCommand).Name);
+                return result;
+            }
+
+            using (logger.BeginScope(new Dictionary<string, object> { ["Error"] = result.Error }))
+                if (logger.IsEnabled(LogLevel.Error))
+                    logger.LogError("Completed command {Command} with error", typeof(TCommand).Name);
 
             return result;
         }
@@ -30,21 +34,24 @@ internal static class LoggingDecorator
     internal sealed class CommandBaseHandler<TCommand>(
         ICommandHandler<TCommand> innerHandler,
         ILogger<CommandBaseHandler<TCommand>> logger
-    ) : ICommandHandler<TCommand> where TCommand : ICommand
-    {
+    ) : ICommandHandler<TCommand> where TCommand : ICommand {
         public async Task<Result> Handle(TCommand command, CancellationToken cancellationToken)
         {
-            string commandName = typeof(TCommand).Name;
-
-            logger.LogInformation("Processing command {Command}", commandName);
+            if (logger.IsEnabled(LogLevel.Information))
+                logger.LogInformation("Processing command {Command}", typeof(TCommand).Name);
 
             Result result = await innerHandler.Handle(command, cancellationToken);
 
             if (result.IsSuccess)
-                logger.LogInformation("Completed command {Command}", commandName);
-            else
-                using (logger.BeginScope(new Dictionary<string, object> { ["Error"] = result.Error }))
-                    logger.LogError("Completed command {Command} with error", commandName);
+            {
+                if (logger.IsEnabled(LogLevel.Information))
+                    logger.LogInformation("Completed command {Command}", typeof(TCommand).Name);
+                return result;
+            }
+
+            using (logger.BeginScope(new Dictionary<string, object> { ["Error"] = result.Error }))
+                if (logger.IsEnabled(LogLevel.Error))
+                    logger.LogError("Completed command {Command} with error", typeof(TCommand).Name);
 
             return result;
         }
@@ -56,17 +63,21 @@ internal static class LoggingDecorator
     ) : IQueryHandler<TQuery, TResponse> where TQuery : IQuery<TResponse> {
         public async Task<Result<TResponse>> Handle(TQuery query, CancellationToken cancellationToken)
         {
-            string queryName = typeof(TQuery).Name;
-
-            logger.LogInformation("Processing query {Query}", queryName);
+            if (logger.IsEnabled(LogLevel.Information))
+                logger.LogInformation("Processing query {Query}", typeof(TQuery).Name);
 
             Result<TResponse> result = await innerHandler.Handle(query, cancellationToken);
 
             if (result.IsSuccess)
-                logger.LogInformation("Completed query {Query}", queryName);
-            else
-                using (logger.BeginScope(new Dictionary<string, object> { ["Error"] = result.Error }))
-                    logger.LogError("Completed query {Query} with error", query);
+            {
+                if (logger.IsEnabled(LogLevel.Information))
+                    logger.LogInformation("Completed query {Query}", typeof(TQuery).Name);
+                return result;
+            }
+
+            using (logger.BeginScope(new Dictionary<string, object> { ["Error"] = result.Error }))
+                if (logger.IsEnabled(LogLevel.Error))
+                    logger.LogError("Completed query {Query} with error", typeof(TQuery).Name);
 
             return result;
         }
