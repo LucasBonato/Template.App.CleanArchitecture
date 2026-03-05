@@ -4,27 +4,34 @@ services:
     container_name: web-api
     build:
       context: .
-      dockerfile: src/Web.Api/Dockerfile
+      dockerfile: src/App/Dockerfile
     ports:
-      - 5000:8080
-      - 5001:8081
+      - "5000:8080"
+      - "5001:8081"
 
   postgres:
-    image: postgres:17
+    image: postgres:18
     container_name: postgres
     environment:
       - POSTGRES_DB=clean-architecture
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ./.containers/db:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - "5433:5432"
 
-  seq:
-    image: datalust/seq:2024.3
-    container_name: seq
+  aspire:
+    container_name: otel-dashboard
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
     environment:
-      - ACCEPT_EULA=Y
+      - ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
+      - Dashboard__ResourceServiceClient__AuthMode=Unsecured
+      - ASPIRE_ALLOW_UNSECURED_TRANSPORT=true
     ports:
-      - 8081:80
+      - "4317:18889"
+      - "4318:18890"
+      - "18888:18888"
+
+volumes:
+  postgres_data:
