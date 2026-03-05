@@ -23,13 +23,13 @@ internal sealed class TodoCreateEndpoint : IEndpoint
             [FromServices] ICommandHandler<CreateTodoCommand, Guid> handler,
             CancellationToken cancellationToken
         ) => {
-            CreateTodoCommand command = new() {
-                UserId = request.UserId,
-                Description = request.Description,
-                DueDate = request.DueDate,
-                Labels = request.Labels,
-                Priority = (Priority)request.Priority
-            };
+            CreateTodoCommand command = new(
+                UserId: request.UserId,
+                Description: request.Description,
+                DueDate: request.DueDate,
+                Labels: request.Labels,
+                Priority: (Priority)request.Priority
+            );
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);
 
