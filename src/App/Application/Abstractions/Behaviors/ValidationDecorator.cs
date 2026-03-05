@@ -41,12 +41,12 @@ internal static class ValidationDecorator
         TCommand command,
         IEnumerable<IValidator<TCommand>> validators
     ) {
-        var enumerable = validators.ToList();
+        List<IValidator<TCommand>> enumerable = validators.ToList();
 
         if (!enumerable.Any())
             return [];
 
-        var context = new ValidationContext<TCommand>(command);
+        ValidationContext<TCommand> context = new ValidationContext<TCommand>(command);
 
         ValidationResult[] validationResults = await Task.WhenAll(
             enumerable.Select(validator => validator.ValidateAsync(context)));

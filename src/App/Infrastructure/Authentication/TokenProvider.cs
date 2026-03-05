@@ -12,12 +12,11 @@ internal sealed class TokenProvider(IConfiguration configuration) : ITokenProvid
     public string Create(User user)
     {
         string secretKey = configuration["Jwt:Secret"]!;
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+        SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(secretKey));
 
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        SigningCredentials credentials = new(securityKey, SecurityAlgorithms.HmacSha256);
 
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
+        SecurityTokenDescriptor tokenDescriptor = new() {
             Subject = new ClaimsIdentity(
             [
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -29,7 +28,7 @@ internal sealed class TokenProvider(IConfiguration configuration) : ITokenProvid
             Audience = configuration["Jwt:Audience"]
         };
 
-        var handler = new JsonWebTokenHandler();
+        JsonWebTokenHandler handler = new();
 
         string token = handler.CreateToken(tokenDescriptor);
 

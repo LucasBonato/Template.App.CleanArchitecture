@@ -30,7 +30,7 @@ internal sealed class DomainEventsDispatcher(
                 if (handler is null)
                     continue;
 
-                var handlerWrapper = HandlerWrapper.Create(handler, domainEventType);
+                HandlerWrapper handlerWrapper = HandlerWrapper.Create(handler, domainEventType);
 
                 await handlerWrapper.Handle(domainEvent, cancellationToken);
             }
@@ -45,9 +45,11 @@ internal sealed class DomainEventsDispatcher(
         {
             Type wrapperType = WrapperTypeDictionary.GetOrAdd(
                 domainEventType,
-                type => typeof(HandlerWrapper<>).MakeGenericType(type));
+                type => typeof(HandlerWrapper<>).MakeGenericType(type)
+            );
 
-            return (HandlerWrapper)Activator.CreateInstance(wrapperType, handler);
+            return (HandlerWrapper)Activator.CreateInstance(wrapperType, handler)
+                   ?? throw new InvalidOperationException("Failed to create domain event handler wrapper.");
         }
     }
 
