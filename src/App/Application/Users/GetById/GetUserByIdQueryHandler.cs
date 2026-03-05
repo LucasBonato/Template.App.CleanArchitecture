@@ -10,23 +10,24 @@ namespace App.Application.Users.GetById;
 internal sealed class GetUserByIdQueryHandler(
     IApplicationDbContext context,
     IUserContext userContext
-) : IQueryHandler<GetUserByIdQuery, UserResponse> {
-    public async Task<Result<UserResponse>> Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
+) : IQueryHandler<GetUserByIdQuery, GetUserResponse> {
+    public async Task<Result<GetUserResponse>> Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
     {
         if (query.UserId != userContext.UserId)
-            return Result.Failure<UserResponse>(UserErrors.Unauthorized());
+            return Result.Failure<GetUserResponse>(UserErrors.Unauthorized());
 
-        UserResponse? user = await context.Users
+        GetUserResponse? user = await context.Users
             .Where(user => user.Id == query.UserId)
-            .Select(user => new UserResponse
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email
-            })
+            .Select(user =>
+                new GetUserResponse(
+                    Id: user.Id,
+                    Email: user.Email,
+                    FirstName: user.FirstName,
+                    LastName: user.LastName
+                )
+            )
             .SingleOrDefaultAsync(cancellationToken);
 
-        return user ?? Result.Failure<UserResponse>(UserErrors.NotFound(query.UserId));
+        return user ?? Result.Failure<GetUserResponse>(UserErrors.NotFound(query.UserId));
     }
 }

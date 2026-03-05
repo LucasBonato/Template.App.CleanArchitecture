@@ -1,4 +1,5 @@
 ﻿using App.Application.Abstractions.Messaging;
+using App.Application.Todos;
 using App.Application.Todos.Get;
 using App.Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -11,18 +12,18 @@ internal sealed class TodoGetEndpoint : IEndpoint
     {
         app.MapGet("todos", async (
             [FromQuery] Guid userId,
-            [FromServices] IQueryHandler<GetTodosQuery, List<TodoResponse>> handler,
+            [FromServices] IQueryHandler<GetTodosQuery, List<GetTodoResponse>> handler,
             CancellationToken cancellationToken
         ) => {
             GetTodosQuery query = new(userId);
 
-            Result<List<TodoResponse>> result = await handler.Handle(query, cancellationToken);
+            Result<List<GetTodoResponse>> result = await handler.Handle(query, cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .WithTags(Tags.Todos)
         .RequireAuthorization()
-        .Produces<List<TodoResponse>>()
+        .Produces<List<GetTodoResponse>>()
         .ProducesValidationProblem()
         .ProducesProblem(StatusCodes.Status401Unauthorized);
     }

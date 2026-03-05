@@ -1,4 +1,5 @@
 ﻿using App.Application.Abstractions.Messaging;
+using App.Application.Users;
 using App.Application.Users.GetById;
 using App.Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -11,18 +12,18 @@ internal sealed class UserGetByIdEndpoint : IEndpoint
     {
         app.MapGet("users/{userId}", async (
             [FromRoute] Guid userId,
-            [FromServices] IQueryHandler<GetUserByIdQuery, UserResponse> handler,
+            [FromServices] IQueryHandler<GetUserByIdQuery, GetUserResponse> handler,
             CancellationToken cancellationToken
         ) => {
             GetUserByIdQuery query = new(userId);
 
-            Result<UserResponse> result = await handler.Handle(query, cancellationToken);
+            Result<GetUserResponse> result = await handler.Handle(query, cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .HasPermission(Permissions.UsersAccess)
         .WithTags(Tags.Users)
-        .Produces<UserResponse>()
+        .Produces<GetUserResponse>()
         .ProducesValidationProblem()
         .ProducesProblem(StatusCodes.Status401Unauthorized);
     }

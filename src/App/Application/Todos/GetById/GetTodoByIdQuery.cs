@@ -2,4 +2,4 @@
 
 namespace App.Application.Todos.GetById;
 
-public sealed record GetTodoByIdQuery(Guid TodoItemId) : IQuery<TodoResponse>;
+public sealed record GetTodoByIdQuery(Guid TodoItemId) : IQuery<GetTodoResponse>;

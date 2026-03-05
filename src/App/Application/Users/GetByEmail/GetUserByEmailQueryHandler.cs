@@ -10,24 +10,26 @@ namespace App.Application.Users.GetByEmail;
 internal sealed class GetUserByEmailQueryHandler(
     IApplicationDbContext context,
     IUserContext userContext
-) : IQueryHandler<GetUserByEmailQuery, UserResponse> {
-    public async Task<Result<UserResponse>> Handle(GetUserByEmailQuery query, CancellationToken cancellationToken)
+) : IQueryHandler<GetUserByEmailQuery, GetUserResponse> {
+    public async Task<Result<GetUserResponse>> Handle(GetUserByEmailQuery query, CancellationToken cancellationToken)
     {
-        UserResponse? user = await context.Users
+        GetUserResponse? user = await context.Users
             .Where(user => user.Email == query.Email)
-            .Select(user => new UserResponse {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email
-            })
+            .Select(user =>
+                new GetUserResponse(
+                    Id: user.Id,
+                    Email: user.Email,
+                    FirstName: user.FirstName,
+                    LastName: user.LastName
+                )
+            )
             .SingleOrDefaultAsync(cancellationToken);
 
         if (user is null)
-            return Result.Failure<UserResponse>(UserErrors.NotFoundByEmail);
+            return Result.Failure<GetUserResponse>(UserErrors.NotFoundByEmail);
 
         if (user.Id != userContext.UserId)
-            return Result.Failure<UserResponse>(UserErrors.Unauthorized());
+            return Result.Failure<GetUserResponse>(UserErrors.Unauthorized());
 
         return user;
     }
